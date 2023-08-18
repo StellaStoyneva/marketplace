@@ -1,6 +1,6 @@
-import { connectDb } from './app';
+import { startApp } from './app';
 
-connectDb().catch(console.dir);
+startApp();
 
 // import { createHttpTerminator } from 'http-terminator';
 // import { create as createApp } from './app';

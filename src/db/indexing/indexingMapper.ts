@@ -1,4 +1,4 @@
-import { CollectionEnum } from 'src/constants/enum/collection.enum';
+import { CollectionEnum } from 'src/db/enum/collection.enum';
 
 export const indexingMapper: Record<string, Record<string, number>[]> = {
   [CollectionEnum.OrderItems]: [

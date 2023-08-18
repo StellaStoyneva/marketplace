@@ -7,12 +7,10 @@
     "resolveJsonModule": true,
     "skipLibCheck": false,
     "lib": ["ES2021"],
+    "strict": true
   },
   "ts-node": {
     "files": true,
-    "require": [
-      "tsconfig-paths/register",
-      "dotenv/config"
-    ]
+    "require": ["tsconfig-paths/register", "dotenv/config"]
   }
 }

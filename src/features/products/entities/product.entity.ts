@@ -23,7 +23,7 @@ export interface IProduct {
     fiveStars: number;
   };
   ratingAverage?: number;
-  reviews?: {
+  fiveMostRecentBestReviews?: {
     rating: number;
     comment?: string | null;
     author: { name: string; id: ObjectId | string };

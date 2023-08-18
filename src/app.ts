@@ -1,49 +1,43 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
 import { config } from 'dotenv';
-import { usersSeedData } from './db/seed/user.seed';
-import { seedMultipleCollections } from './db/utils/seedMultipleCollections';
+import Fastify from 'fastify';
+import { dbMapper } from './db/config/dbMapper';
+import { dbEnum } from './db/enum/db.enum';
+import { connectDb } from './db/utils/connectDb';
+// import { mongoDB } from './db/config/mongoDB';
+// import { CollectionEnum } from './db/enum/collection.enum';
 import {
-  orderItemSeedData,
-  orderSeedData,
-  productCategoriesSeedData,
-  productsSeedData,
-  productTypeSeedData,
-  reviewsSeedData,
-  storeSeedData,
-} from './db/seed';
-import { attachAllIndices } from './db/utils/attachAllIndices';
-import { indexingMapper } from './db/indexing/indexingMapper';
-import { attachIndex } from './db/utils/attachIndex';
-
+  getProductsCountRoute,
+  getProductsRangeRoute,
+} from './features/products/services';
+import fastifyQS from 'fastify-qs';
 config();
-const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.w0gfkgp.mongodb.net/?retryWrites=true&w=majority`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
+const app = Fastify({
+  logger: true,
 });
 
-const db = client.db(process.env.DB_NAME);
+app.register(fastifyQS, {});
 
-export async function connectDb() {
+app.register(getProductsCountRoute, { prefix: '/v1' });
+app.register(getProductsRangeRoute, { prefix: '/v1' });
+
+const startServer = async () => {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    console.log('Connected');
+    await app.ready();
+    //console.log(app.printRoutes());
 
-    // Send a ping to confirm a successful connection
-    await client.db('admin').command({ ping: 1 });
-    console.log(
-      'Pinged your deployment. You successfully connected to MongoDB!'
-    );
-    //attachAllIndices(db, indexingMapper, attachIndex);
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    await app.listen({ port: 3000, host: '0.0.0.0' });
+  } catch (err) {
+    app.log.error('Fastify ERROR', JSON.stringify(err));
+    process.exit(1);
   }
-}
-//run().catch(console.dir);
+};
+
+export const startApp = async () => {
+  startServer();
+  connectDb(dbEnum.Mongo, dbMapper);
+  // const result = await mongoDB
+  //   .collection(CollectionEnum.Products)
+  //   .countDocuments({ ratingAverage: 2.41 });
+  // console.log('COUNT', result);
+};

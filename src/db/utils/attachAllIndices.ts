@@ -1,5 +1,5 @@
 import { Db } from 'mongodb';
-import { CollectionEnum } from 'src/constants/enum/collection.enum';
+import { CollectionEnum } from 'src/db/enum/collection.enum';
 
 export const attachAllIndices = (
   db: Db,
