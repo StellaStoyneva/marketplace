@@ -1,0 +1,15 @@
+type filterType =
+  | 'name'
+  | 'productCode'
+  | 'store'
+  | 'offer'
+  | 'isPromoted'
+  | 'productCategories'
+  | 'productTypes'
+  | 'createdBy'
+  | 'updatedBy'
+  | 'price'
+  | 'availableQuantity'
+  | 'ratingAverage'
+  | 'createdAt'
+  | 'updatedAt';

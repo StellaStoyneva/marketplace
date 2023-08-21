@@ -1,43 +1,36 @@
-import { config } from 'dotenv';
 import Fastify from 'fastify';
-import { dbMapper } from './db/config/dbMapper';
-import { dbEnum } from './db/enum/db.enum';
-import { connectDb } from './db/utils/connectDb';
-// import { mongoDB } from './db/config/mongoDB';
-// import { CollectionEnum } from './db/enum/collection.enum';
+import fastifyQs from 'fastify-qs';
+import initiateDb from './plugins/decorate-db';
+
 import {
-  getProductsCountRoute,
-  getProductsRangeRoute,
-} from './features/products/services';
-import fastifyQS from 'fastify-qs';
-config();
+  serializerCompiler,
+  validatorCompiler,
+  ZodTypeProvider,
+} from 'fastify-type-provider-zod';
+import { productsCount } from './features/products/services';
 
-const app = Fastify({
-  logger: true,
-});
+// const {
+//   MONGO_HOST = 'localhost',
+//   MONGO_PORT = '27017',
+//   MONGO_USER = 'contrast',
+//   MONGO_PASSWORD = 'password',
+// } = process.env;
 
-app.register(fastifyQS, {});
+// const MONGO_URL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
+const MONGO_URL = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.w0gfkgp.mongodb.net/?retryWrites=true&w=majority`;
 
-app.register(getProductsCountRoute, { prefix: '/v1' });
-app.register(getProductsRangeRoute, { prefix: '/v1' });
+export const create = async () => {
+  const app = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
 
-const startServer = async () => {
-  try {
-    await app.ready();
-    //console.log(app.printRoutes());
+  app.register(fastifyQs, {});
 
-    await app.listen({ port: 3000, host: '0.0.0.0' });
-  } catch (err) {
-    app.log.error('Fastify ERROR', JSON.stringify(err));
-    process.exit(1);
-  }
-};
+  // Add schema validator and serializer
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
-export const startApp = async () => {
-  startServer();
-  connectDb(dbEnum.Mongo, dbMapper);
-  // const result = await mongoDB
-  //   .collection(CollectionEnum.Products)
-  //   .countDocuments({ ratingAverage: 2.41 });
-  // console.log('COUNT', result);
+  await app.register(initiateDb, { url: MONGO_URL });
+
+  app.register(productsCount, { prefix: '/products' });
+
+  return app;
 };
