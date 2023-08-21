@@ -1,43 +1,33 @@
-import { config } from 'dotenv';
 import Fastify from 'fastify';
-import { dbMapper } from './db/config/dbMapper';
-import { dbEnum } from './db/enum/db.enum';
-import { connectDb } from './db/utils/connectDb';
-// import { mongoDB } from './db/config/mongoDB';
-// import { CollectionEnum } from './db/enum/collection.enum';
-import {
-  getProductsCountRoute,
-  getProductsRangeRoute,
-} from './features/products/services';
-import fastifyQS from 'fastify-qs';
-config();
+import fastifyQs from 'fastify-qs';
+import initiateDb from './plugins/decorate-db'
+import { hello } from './api/hello'
 
-const app = Fastify({
-  logger: true,
-});
+import { serializerCompiler, validatorCompiler, ZodTypeProvider } from "fastify-type-provider-zod";
+import { productsCount } from './api/product';
 
-app.register(fastifyQS, {});
+const {
+  MONGO_HOST = 'localhost',
+  MONGO_PORT = '27017',
+  MONGO_USER = 'contrast',
+  MONGO_PASSWORD = 'password',
+} = process.env;
 
-app.register(getProductsCountRoute, { prefix: '/v1' });
-app.register(getProductsRangeRoute, { prefix: '/v1' });
+const MONGO_URL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
 
-const startServer = async () => {
-  try {
-    await app.ready();
-    //console.log(app.printRoutes());
+export const create = async () => {
+  const app = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
 
-    await app.listen({ port: 3000, host: '0.0.0.0' });
-  } catch (err) {
-    app.log.error('Fastify ERROR', JSON.stringify(err));
-    process.exit(1);
-  }
-};
+  app.register(fastifyQs, {});
 
-export const startApp = async () => {
-  startServer();
-  connectDb(dbEnum.Mongo, dbMapper);
-  // const result = await mongoDB
-  //   .collection(CollectionEnum.Products)
-  //   .countDocuments({ ratingAverage: 2.41 });
-  // console.log('COUNT', result);
-};
+  // Add schema validator and serializer
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
+
+  await app.register(initiateDb, { url: MONGO_URL })
+
+  app.register(hello, { prefix: '/hello' })
+  app.register(productsCount, { prefix: '/products' })
+
+  return app;
+}
