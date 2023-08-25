@@ -1,9 +1,9 @@
 import { FastifyPluginCallback, RawServerDefault } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { queryStringProductSchema } from '../schemas/queryStringProductSchema';
+import { queryStringProductSchema } from '../schemas/queryString.product.schema';
 import { productsQueryFilter } from '../utils/queryFilter';
 
-export const productsCount: FastifyPluginCallback<
+export const countProducts: FastifyPluginCallback<
   Record<never, never>,
   RawServerDefault,
   ZodTypeProvider
@@ -15,7 +15,7 @@ export const productsCount: FastifyPluginCallback<
         querystring: queryStringProductSchema,
       },
     },
-    async (req, reply) => {
+    async function countProductsHandler(req) {
       console.log(req.query);
       const resultQuery = Object.entries(req.query).reduce(
         (acc: any, [k, v]) => {
@@ -29,12 +29,12 @@ export const productsCount: FastifyPluginCallback<
         {}
       );
 
-      reply.send({
+      return {
         productsCount: await fastify
           .db(process.env.DB_NAME as string)
           ?.collection('products')
           .countDocuments(resultQuery),
-      });
+      };
     }
   );
 
