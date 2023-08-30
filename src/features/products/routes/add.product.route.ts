@@ -11,6 +11,7 @@ export const addProduct: FastifyPluginCallback<
   fastify.post(
     '/',
     {
+      onRequest: [fastify.authorizeStoreAdmin],
       schema: {
         body: insertBodySchema,
       },
@@ -19,8 +20,12 @@ export const addProduct: FastifyPluginCallback<
       console.log(req.body);
       //TODO add user as createdBy value
       //TODO add store id as store
-      const store = new ObjectId();
-      const createdBy = new ObjectId();
+      // const store = new ObjectId();
+      // const createdBy = new ObjectId();
+
+      const store = req.user.store;
+      const createdBy = req.user._id;
+      console.log({ usr: req.user });
 
       const resultBody = req.body;
       if (Array.isArray(resultBody)) {
@@ -41,7 +46,7 @@ export const addProduct: FastifyPluginCallback<
         .db(process.env.DB_NAME as string)
         ?.collection('products')
         .insertOne({
-          ...req.body,
+          ...(resultBody as object),
           createdAt: new Date(),
           createdBy: new ObjectId(),
         });
@@ -50,3 +55,7 @@ export const addProduct: FastifyPluginCallback<
 
   done();
 };
+
+//{"name":"aaa", "password": "test123123", "email": "aa@abv.bg", "store": "64da22bb79c2ec46b859288e", "role": "store admin" }
+//{"password": "test123123", "email": "aa@abv.bg" }
+//{"name": "nn", "productCode": "aefs" }

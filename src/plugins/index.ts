@@ -1,2 +1,3 @@
 import initiateDb from './decorate-db';
-export { initiateDb };
+import authenticationPlugin from './authentication';
+export { initiateDb, authenticationPlugin };

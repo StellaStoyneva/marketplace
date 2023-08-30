@@ -1,3 +1,5 @@
+import { loginUser } from '@users/routes/login.user.route';
+import { registerUser } from '@users/routes/register.user.route';
 import Fastify from 'fastify';
 import fastifyQs from 'fastify-qs';
 
@@ -12,7 +14,7 @@ import {
   updateProduct,
   deleteProduct,
 } from './features/products/routes';
-import { initiateDb } from './plugins';
+import { initiateDb, authenticationPlugin } from './plugins';
 
 // const {
 //   MONGO_HOST = 'localhost',
@@ -45,10 +47,14 @@ export const create = async () => {
 
   await app.register(initiateDb, { url: MONGO_URL });
 
+  app.register(authenticationPlugin);
+
   app.register(countProducts, { prefix: '/products' });
   app.register(addProduct, { prefix: '/products' });
   app.register(updateProduct, { prefix: '/products' });
   app.register(deleteProduct, { prefix: '/products' });
+  app.register(registerUser, { prefix: '/auth' });
+  app.register(loginUser, { prefix: '/auth' });
 
   return app;
 };

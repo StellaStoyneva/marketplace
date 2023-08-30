@@ -30,6 +30,8 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@fastify/jwt": "^7.2.0",
+    "bcrypt": "^5.1.1",
     "fastify": "^4.21.0",
     "fastify-qs": "^4.0.2",
     "fastify-type-provider-zod": "^1.1.9",
@@ -41,6 +43,7 @@
     "@faker-js/faker": "^8.0.2",
     "@ls-lint/ls-lint": "^1.11.2",
     "@tsconfig/recommended": "^1.0.2",
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^29.4.0",
     "@types/node": "^18.14.0",
     "@types/qs": "^6.9.7",
