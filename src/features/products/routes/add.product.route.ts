@@ -3,6 +3,15 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ObjectId } from 'mongodb';
 import { insertBodySchema } from '../schemas';
 
+declare module 'fastify' {
+  interface FastifyRequest {
+    user: {
+      _id: string,
+      store: string
+    }
+  }
+}
+
 export const addProduct: FastifyPluginCallback<
   Record<never, never>,
   RawServerDefault,
@@ -29,7 +38,7 @@ export const addProduct: FastifyPluginCallback<
 
       const resultBody = req.body;
       if (Array.isArray(resultBody)) {
-        resultBody.forEach((res) => ({
+        const arr = resultBody.map((res) => ({
           ...res,
           createdAt: new Date(),
           store,
@@ -39,7 +48,7 @@ export const addProduct: FastifyPluginCallback<
         return await fastify
           .db(process.env.DB_NAME as string)
           ?.collection('products')
-          .insertMany(resultBody);
+          .insertMany(arr);
       }
 
       return await fastify
