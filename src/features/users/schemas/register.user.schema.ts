@@ -5,4 +5,5 @@ export const registerUserSchema = z.object({
   password: z.string().min(6),
   store: z.string().optional(),
   role: z.string(),
+  phoneNumber: z.string(),
 });

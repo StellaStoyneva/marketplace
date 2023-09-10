@@ -23,9 +23,20 @@ export const updateProduct: FastifyPluginCallback<
         body: insertOneBodySchema,
       },
     },
-    async function updateProductRoute(req) {
-      const result = await updateProductHandler(fastify, req.params, req.body);
-      return result;
+    async function updateProductRoute(req, reply) {
+      const productId = new ObjectId(req.params.id);
+      fastify.authorizeStoreAdminForSpecificStore(req, reply, 'products', {
+        _id: productId,
+      });
+      const updatedBy = new ObjectId(req.user._id);
+
+      return await fastify
+        .db(process.env.DB_NAME as string)
+        ?.collection('products')
+        .updateOne(
+          { _id: productId },
+          { $set: { ...req.body, updatedAt: new Date(), updatedBy } }
+        );
     }
   );
 

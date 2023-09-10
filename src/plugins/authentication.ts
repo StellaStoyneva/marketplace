@@ -1,13 +1,37 @@
-import { FastifyPluginCallback, FastifyRequest } from 'fastify';
+import { FastifyPluginCallback } from 'fastify';
 import fp from 'fastify-plugin';
 import fastifyJwt from '@fastify/jwt';
 import { UserRoleEnum } from 'src/constants/enum';
+import { ObjectId } from 'mongodb';
 
 const { JWT_SECRET } = process.env;
 declare module 'fastify' {
   interface FastifyInstance {
-    authenticate: (request: any, reply: FastifyReply) => Promise<void>;
+    authenticate: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>;
     authorizeStoreAdmin: (request: any, reply: FastifyReply) => Promise<void>;
+    authorizeStoreAdminForSpecificStore: (
+      request: FastifyRequest,
+      reply: FastifyReply,
+      coll: string,
+      query: Record<string, ObjectId>
+    ) => Promise<void>;
+  }
+}
+
+export interface IUser {
+  email: string;
+  role: string;
+  store?: string;
+  _id: string;
+}
+
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    payload: any;
+    user: IUser;
   }
 }
 
@@ -29,7 +53,7 @@ const authenticationPlugin: FastifyPluginCallback =
 
         try {
           await request.jwtVerify();
-          console.log('req user', request.user);
+          //console.log('req user', request.user);
         } catch (err) {
           reply.send(err);
         }
@@ -41,13 +65,42 @@ const authenticationPlugin: FastifyPluginCallback =
       async function authorizeStoreAdmin(request, reply) {
         try {
           await request.jwtVerify();
-          console.log('request.user.role', request.user.role, request.user);
-          console.log('UserRoleEnum.StoreAdmin', UserRoleEnum.StoreAdmin);
 
           if (request.user.role !== UserRoleEnum.StoreAdmin) {
             throw new Error(
               'User is not authorized for this operation. User must have store admin rights'
             );
+          }
+        } catch (err) {
+          reply.send(err);
+        }
+      }
+    );
+
+    fastify.decorate(
+      'authorizeStoreAdminForSpecificStore',
+      async function authorizeStoreAdminForSpecificStore(
+        request,
+        reply,
+        coll,
+        query
+      ) {
+        try {
+          await request.jwtVerify();
+
+          if (request.user.role !== UserRoleEnum.StoreAdmin) {
+            throw new Error(
+              'User is not authorized for this operation. User must have store admin rights'
+            );
+          }
+
+          const itemInParams = await fastify
+            .db(process.env.DB_NAME as string)
+            ?.collection(coll)
+            .findOne(query);
+
+          if (request.user.store !== itemInParams?.store) {
+            throw new Error('Unauthorized store admin');
           }
         } catch (err) {
           reply.send(err);

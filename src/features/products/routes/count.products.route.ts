@@ -16,7 +16,6 @@ export const countProducts: FastifyPluginCallback<
       },
     },
     async function countProductsHandler(req) {
-      console.log(req.query);
       const resultQuery = Object.entries(req.query).reduce(
         (acc: any, [k, v]) => {
           return {

@@ -1,3 +1,4 @@
 import initiateDb from './decorate-db';
 import authenticationPlugin from './authentication';
-export { initiateDb, authenticationPlugin };
+import enumsPlugin from './enums.getter';
+export { initiateDb, authenticationPlugin, enumsPlugin };

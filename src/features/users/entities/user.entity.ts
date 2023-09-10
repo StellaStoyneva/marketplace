@@ -5,7 +5,7 @@ import { IAddress } from 'src/constants/types/address';
 export interface IUser {
   name: string;
   email: string;
-  phoneNumber?: string;
+  phoneNumber: string;
   address?: IAddress;
   role: UserRoleEnum;
   store?: ObjectId | string;

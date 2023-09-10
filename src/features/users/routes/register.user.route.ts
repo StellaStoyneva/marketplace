@@ -1,4 +1,3 @@
-import { userSchema } from '@users/schemas/login.user.schema';
 import { registerUserSchema } from '@users/schemas/register.user.schema';
 import { hashPassword } from '@users/utils/passwordProcess';
 import { FastifyPluginCallback, RawServerDefault } from 'fastify';
