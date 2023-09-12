@@ -8,6 +8,7 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod';
+import { CollectionEnum } from './db/enum/collection.enum';
 import { addOrder } from './features/orders/routes/add.order.route';
 import { getOrders } from './features/orders/routes/getOrders.order.route';
 import {
@@ -58,7 +59,6 @@ export const create = async () => {
   app.register(registerUser, { prefix: '/auth' });
   app.register(loginUser, { prefix: '/auth' });
   app.register(addOrder, { prefix: '/order' });
-  app.register(getOrders, { prefix: '/order' });
-
+  //app.register(getOrders, { prefix: '/order' });
   return app;
 };

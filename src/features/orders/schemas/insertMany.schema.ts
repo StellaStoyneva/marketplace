@@ -4,42 +4,54 @@ import { z } from 'zod';
 //return deadline calc - on delivery status delivered
 
 export const insertOrderSchema = z.object({
-  priceToPayOnOrderWithVAT: z.number().coerce(),
+  //payment
+  transactions: z.array(z.string().optional()).optional(),
+  totalPriceBeforeVAT: z.number().coerce(),
+  totalPriceWithVAT: z.number().coerce(),
+  paymentMethod: z.string(),
   invoiceAddress: z.object({
     streetAddress: z.string(),
-    zipCode: z.string(),
+    zipCode: z.number().coerce(),
     city: z.string(),
     country: z.string(),
   }),
-  orderItems: z.array(
+
+  /**Items */
+  ordersToStore: z.array(
     z.object({
-      finalPriceBeforeVAT: z.number().coerce(),
-      finalPriceWithVAT: z.number().coerce(),
-      invoiceAddress: z.object({
-        streetAddress: z.string(),
-        zipCode: z.number().coerce(),
-        city: z.string(),
-        country: z.string(),
-      }),
-      paymentMethod: z.string(), //PaymentMethodTypeEnum;
-      deliveryType: z.string(), //DeliveryTypeEnum;
-      deliveryRecipient: z.string(),
-      recipientPhoneNumber: z.string(),
+      /**Store - items */
       store: z.string(),
       items: z.array(
         z.object({
           _id: z.string(),
           name: z.string(),
-          productCode: z.string(),
+          sku: z.string(),
+          image: z.string(),
           singlePriceBeforeVAT: z.number().coerce(),
           singlePriceWithVAT: z.number().coerce(),
           finalPriceBeforeVAT: z.number().coerce(),
           finalPriceWithVAT: z.number().coerce(),
           quantity: z.number().coerce(),
           daysForReturn: z.number().coerce(),
-          images: z.array(z.string()),
         })
       ),
+      /**Payment */
+      finalPriceBeforeVAT: z.number().coerce(),
+      finalPriceWithVAT: z.number().coerce(),
+      /**Delivery */
+      deliveryDetails: z.object({
+        deliveryType: z.string(), //DeliveryTypeEnum;
+        recipient: z.string(),
+        phoneNumber: z.string(),
+        address: z.object({
+          streetAddress: z.string(),
+          zipCode: z.number().coerce(),
+          city: z.string(),
+          country: z.string(),
+        }),
+        deliveryStatus: z.string(),
+      }),
+      transaction: z.string().optional(),
     })
   ),
 });

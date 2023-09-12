@@ -1,17 +1,29 @@
 import { ObjectId } from 'mongodb';
 
 export interface IOrderItem {
-  itemName: string;
+  _id: ObjectId;
+  order: ObjectId | string;
+  store: ObjectId | string;
+
+  //product
+  name: string;
+  sku: string;
+  image: string;
+
+  //pricing
   singlePriceBeforeVAT: number;
   singlePriceWithVAT: number;
   finalPriceBeforeVAT: number;
   finalPriceWithVAT: number;
   quantity: number;
-  image: string;
-  store: ObjectId | string;
-  deliveryStatus: ObjectId | string;
+
+  //status
+  deliveryStatus: ObjectId;
+  daysForReturn: number;
+  isReturnable: boolean;
   isReturned: boolean;
-  order: ObjectId | string;
-  returnDeadline: Date;
+  isRefundable: boolean;
+  isRefunded: boolean;
+  returnDeadline?: Date;
   refundDeadline?: Date;
 }

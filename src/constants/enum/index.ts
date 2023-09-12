@@ -6,6 +6,7 @@ import { DeliveryStatusEnum } from './deliveryStatus.enum';
 import { PaymentMethodTypeEnum } from './paymentMethod.enum';
 import { DeliveryTypeEnum } from './deliveryType.enum';
 import { OrderItemLifeCycleEnum } from './orderItemLifeCycle.enum';
+import { ReturnStatusEnum } from './returnStatus.enum';
 
 export {
   UserRoleEnum,
@@ -16,4 +17,5 @@ export {
   PaymentMethodTypeEnum,
   DeliveryTypeEnum,
   OrderItemLifeCycleEnum,
+  ReturnStatusEnum,
 };

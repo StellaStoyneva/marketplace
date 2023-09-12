@@ -1,10 +1,3 @@
-export enum DeliveryStatusEnum {
-  ordered = 'ordered',
-  delivered = 'delivered', // return date should be calculated
-  shipped = 'shipped',
-  canceled = 'canceled', // rollback quantity
-}
-
 export enum ReturnStatusEnum {
   shippedBack = 'shipped back', // itemsQualityCheckDeadline to be calculated
   deliveredBack = 'received back in store', // refund date should be calculated

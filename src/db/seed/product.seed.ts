@@ -32,8 +32,9 @@ const getRatingMockedData = () => {
 function createProductDocumentSeed(): IProduct {
   return {
     name: faker.string.alphanumeric({ length: { min: 3, max: 60 } }),
-    productCode: faker.string.alphanumeric(),
-    price: faker.number.float(),
+    sku: faker.string.alphanumeric(),
+    singlePriceBeforeVAT: faker.number.float(),
+    singlePriceWithVAT: faker.number.float(),
     availableQuantity: faker.number.int({ min: 0 }),
     store: faker.database.mongodbObjectId(),
     offer: faker.helpers.arrayElement([

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const queryStringProductSchema = z.object({
   name: z.string().optional(),
-  productCode: z.string().optional(),
+  sku: z.string().optional(),
   store: z.string().optional(),
   offer: z.array(z.string().optional()).or(z.string().optional()), //z.nativeEnum(OfferTypeEnum).nullish().optional(),
   isPromoted: z.number().coerce().optional(),
@@ -17,7 +17,10 @@ export const queryStringProductSchema = z.object({
   availableQuantity: z
     .array(z.number().coerce().optional())
     .or(z.number().coerce().optional()),
-  price: z
+  singlePriceBeforeVAT: z
+    .array(z.number().coerce().optional())
+    .or(z.number().coerce().optional()),
+  singlePriceWithVAT: z
     .array(z.number().coerce().optional())
     .or(z.number().coerce().optional()),
   createdAt: z.array(z.string().optional()).or(z.string().optional()),

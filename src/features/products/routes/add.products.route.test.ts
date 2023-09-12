@@ -23,13 +23,13 @@ describe('add Product route handler', function () {
   });
   it('works', function () {
     routeHandler({
-      body: { name: 'testName', productCode: 'testCode' },
+      body: [{ name: 'testName', sku: 'testCode' }],
       user: { _id: 'testUserId', store: 'testStore' },
     });
 
     expect(mockFastify.db).toBeCalled();
     expect(mockFastify.db.collection).toBeCalled();
-    // expect(mockFastify.db.collection('products').insertOne).toBeCalledWith({
+    // expect(mockFastify.db.collection('products').insertOne.toBeCalledWith({
     //   name: 'testName',
     //   productCode: 'testCode',
     // });

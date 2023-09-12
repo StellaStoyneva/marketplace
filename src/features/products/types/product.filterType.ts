@@ -1,6 +1,6 @@
 type filterType =
   | 'name'
-  | 'productCode'
+  | 'sku'
   | 'store'
   | 'offer'
   | 'isPromoted'
@@ -8,7 +8,8 @@ type filterType =
   | 'productTypes'
   | 'createdBy'
   | 'updatedBy'
-  | 'price'
+  | 'singlePriceBeforeVAT'
+  | 'singlePriceWithVAT'
   | 'availableQuantity'
   | 'ratingAverage'
   | 'createdAt'

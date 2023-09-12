@@ -17,7 +17,7 @@ const rangeQuery = (filter: keyof typeof productsQueryFilter, value: any[]) => {
 export const productsQueryFilter: Record<filterType, any> = {
   //exact strings
   name: (value: string) => exactMatchQuery('name', value),
-  productCode: (value: string) => exactMatchQuery('productCode', value),
+  sku: (value: string) => exactMatchQuery('sku', value),
   store: (value: string) => exactMatchQuery('store', value),
   offer: (value: string) => exactMatchQuery('offer', value),
   productCategories: (value: string) =>
@@ -30,11 +30,18 @@ export const productsQueryFilter: Record<filterType, any> = {
   isPromoted: (value: string) => exactMatchQuery('isPromoted', Boolean(value)),
 
   //range or exact number
-  price: (value: number | number[]) => {
+  singlePriceWithVAT: (value: number | number[]) => {
     if (Array.isArray(value)) {
-      return rangeQuery('price', value);
+      return rangeQuery('singlePriceWithVAT', value);
     } else {
-      return { price: { $eq: value } };
+      return { singlePriceWithVAT: { $eq: value } };
+    }
+  },
+  singlePriceBeforeVAT: (value: number | number[]) => {
+    if (Array.isArray(value)) {
+      return rangeQuery('singlePriceWithVAT', value);
+    } else {
+      return { singlePriceWithVAT: { $eq: value } };
     }
   },
   availableQuantity: (value: number | number[]) => {

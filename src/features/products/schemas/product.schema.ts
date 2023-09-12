@@ -29,8 +29,9 @@ const fiveMostRecentBestReviews = z.array(
 export const ProductSchema = z
   .object({
     name: z.string().min(5).max(200),
-    productCode: z.string().max(50).optional(),
-    price: z.number().positive(), // decimal
+    sku: z.string().max(50).optional(),
+    singlePriceBeforeVAT: z.number().coerce(),
+    singlePriceWithVAT: z.number().coerce(),
     availableQuantity: z.number().int().nonnegative(),
     store: _id,
     offer: z.nativeEnum(OfferTypeEnum).nullish(),
