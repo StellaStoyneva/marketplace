@@ -1,19 +1,49 @@
-import { FastifyPluginCallback } from 'fastify';
+import {
+  FastifyPluginCallback,
+  FastifySchema,
+  RawServerDefault,
+  RouteGenericInterface,
+} from 'fastify';
 import fp from 'fastify-plugin';
 import fastifyJwt from '@fastify/jwt';
 import { UserRoleEnum } from 'src/constants/enum';
 import { ObjectId } from 'mongodb';
+import { IncomingMessage } from 'http';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 const { JWT_SECRET } = process.env;
 declare module 'fastify' {
   interface FastifyInstance {
-    authenticate: (
-      request: FastifyRequest,
+    authenticate: <T extends FastifySchema>(
+      request: FastifyRequest<
+        RouteGenericInterface,
+        RawServerDefault,
+        IncomingMessage,
+        T,
+        ZodTypeProvider
+      >,
       reply: FastifyReply
     ) => Promise<void>;
-    authorizeStoreAdmin: (request: any, reply: FastifyReply) => Promise<void>;
-    authorizeStoreAdminForSpecificStore: (
-      request: FastifyRequest,
+
+    authorizeStoreAdmin: <T extends FastifySchema>(
+      request: FastifyRequest<
+        RouteGenericInterface,
+        RawServerDefault,
+        IncomingMessage,
+        T,
+        ZodTypeProvider
+      >,
+      reply: FastifyReply,
+      done: (err?: undefined | Error) => void
+    ) => Promise<void>;
+    authorizeStoreAdminForSpecificStore: <T extends FastifySchema>(
+      request: FastifyRequest<
+        RouteGenericInterface,
+        RawServerDefault,
+        IncomingMessage,
+        T,
+        ZodTypeProvider
+      >,
       reply: FastifyReply,
       coll: string,
       query: Record<string, ObjectId>
@@ -62,7 +92,7 @@ const authenticationPlugin: FastifyPluginCallback =
 
     fastify.decorate(
       'authorizeStoreAdmin',
-      async function authorizeStoreAdmin(request, reply) {
+      async function authorizeStoreAdmin(request, reply, done) {
         try {
           await request.jwtVerify();
 
@@ -71,6 +101,7 @@ const authenticationPlugin: FastifyPluginCallback =
               'User is not authorized for this operation. User must have store admin rights'
             );
           }
+          done();
         } catch (err) {
           reply.send(err);
         }

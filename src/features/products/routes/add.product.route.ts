@@ -1,13 +1,14 @@
 import { FastifyPluginCallback, RawServerDefault } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ObjectId } from 'mongodb';
-import { insertBodySchema, insertOneBodySchema } from '../schemas';
+import { insertOneBodySchema } from '../schemas';
 
 export const addProduct: FastifyPluginCallback<
   Record<never, never>,
   RawServerDefault,
   ZodTypeProvider
 > = (fastify, _opts, done) => {
+
   fastify.post(
     '/',
     {
@@ -16,10 +17,9 @@ export const addProduct: FastifyPluginCallback<
         body: insertOneBodySchema,
       },
     },
-    async function addProductsHandler(req) {
+    async (req) => {
       const store = new ObjectId(req.user.store);
       const createdBy = new ObjectId(req.user._id);
-
       const resultBody = req.body;
       if (Array.isArray(resultBody)) {
         const arr = resultBody.map((res) => ({
@@ -37,10 +37,7 @@ export const addProduct: FastifyPluginCallback<
           createdBy,
         }));
 
-        return await fastify
-          .db(process.env.DB_NAME as string)
-          ?.collection('products')
-          .insertMany(arr);
+        return await fastify.services.productService.addProducts(arr)
       }
     }
   );
