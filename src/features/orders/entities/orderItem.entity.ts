@@ -1,9 +1,11 @@
 import { ObjectId } from 'mongodb';
+import { OrderItemLifeCycleEnum } from 'src/constants/enum';
 
 export interface IOrderItem {
-  _id: ObjectId;
-  order: ObjectId | string;
-  store: ObjectId | string;
+  _id: ObjectId | string;
+  order?: ObjectId | string;
+  store?: ObjectId | string;
+  product?: ObjectId | string;
 
   //product
   name: string;
@@ -18,12 +20,13 @@ export interface IOrderItem {
   quantity: number;
 
   //status
-  deliveryStatus: ObjectId;
+  deliveryStatus?: ObjectId;
   daysForReturn: number;
-  isReturnable: boolean;
-  isReturned: boolean;
-  isRefundable: boolean;
-  isRefunded: boolean;
+  isReturnable?: boolean;
+  isReturned?: boolean;
+  isRefundable?: boolean;
+  isRefunded?: boolean;
   returnDeadline?: Date;
   refundDeadline?: Date;
+  status?: OrderItemLifeCycleEnum;
 }

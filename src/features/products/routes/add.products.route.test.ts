@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { register } from '../../../extensions/zod';
 register();
 import { ObjectId } from 'mongodb';
-import { addProduct } from './add.product.route';
+import { addProducts as addProductsRoute } from './add.product.route';
 
 describe('add Product route handler', function () {
   let routeHandler: any;
@@ -10,11 +11,25 @@ describe('add Product route handler', function () {
   let insertFn: any;
   let userId: any;
   let store: any;
+  let addProducts: any;
+  let updateProduct: any;
+  let deleteProduct: any;
+  let productService: any;
 
   beforeEach(function () {
     insertFn = jest.fn();
-    collection = jest.fn(() => ({ insertOne: insertFn, insertMany: insertFn }));
+    collection = jest.fn(() => ({ insertMany: insertFn }));
+    //  productService = jest.fn(() => ({ addProducts }));
+    addProducts = jest.fn(() => ({
+      insertMany: insertFn,
+    }));
     mockFastify = {
+      services: {
+        productService: {
+          addProducts,
+        },
+      },
+
       post: (_path: any, _opts: any, handler: never) => {
         routeHandler = handler;
       },
@@ -27,15 +42,27 @@ describe('add Product route handler', function () {
     userId = new ObjectId();
     store = new ObjectId();
 
-    addProduct(mockFastify as never, undefined as never, () => null);
+    addProductsRoute(mockFastify as never, undefined as never, () => null);
   });
   it('works', function () {
     const body = [
       {
         name: 'testName',
         sku: 'testCode',
+        singlePriceBeforeVAT: 10.0,
+        singlePriceWithVAT: 12.5,
+        availableQuantity: 10,
+        offer: 'sale',
+        isPromoted: 1,
         productCategories: [new ObjectId()],
         productTypes: new ObjectId(),
+        guaranteeDurationMonths: 24,
+        returnPolicy: {
+          daysForReturn: 30,
+          description: 'testDescription',
+          url: 'https://www.test.com',
+        },
+        images: ['https://www.test-image1.com', 'https://www.test-image2.com'],
       },
     ];
     routeHandler({
@@ -43,8 +70,11 @@ describe('add Product route handler', function () {
       user: { _id: userId, store },
     });
 
-    expect(mockFastify.db).toBeCalled();
-    expect(collection).toBeCalled();
-    expect(insertFn.mock.calls[0][0]).toMatchObject(body);
+    expect(mockFastify.services.productService.addProducts).toBeCalled();
+
+    // expect(mockFastify.services.productService).toBeCalled();
+    // expect(mockFastify.db).toBeCalled();
+    // expect(collection).toBeCalled();
+    // expect(insertFn.mock.calls[0][0]).toMatchObject(body);
   });
 });

@@ -1,11 +1,14 @@
 const exactMatchQuery = (
   filter: keyof typeof productsQueryFilter,
-  value: any
+  value: string | boolean | number
 ) => {
   return { [filter]: { $eq: value } };
 };
 
-const rangeQuery = (filter: keyof typeof productsQueryFilter, value: any[]) => {
+const rangeQuery = (
+  filter: keyof typeof productsQueryFilter,
+  value: number[]
+) => {
   return {
     [filter]: {
       $gte: value[0],
@@ -14,7 +17,20 @@ const rangeQuery = (filter: keyof typeof productsQueryFilter, value: any[]) => {
   };
 };
 
-export const productsQueryFilter: Record<filterType, any> = {
+// TODO install moment and process dates
+const dateRangeQuery = (
+  filter: keyof typeof productsQueryFilter,
+  value: string[]
+) => {
+  return {
+    [filter]: {
+      $gte: value[0],
+      $lte: value[1],
+    },
+  };
+};
+
+export const productsQueryFilter = {
   //exact strings
   name: (value: string) => exactMatchQuery('name', value),
   sku: (value: string) => exactMatchQuery('sku', value),
@@ -60,18 +76,18 @@ export const productsQueryFilter: Record<filterType, any> = {
   },
 
   //range or exact Date
-  createdAt: (value: number | number[]) => {
-    if (Array.isArray(value)) {
-      return rangeQuery('createdAt', value);
-    } else {
-      return exactMatchQuery('createdAt', value);
-    }
-  },
-  updatedAt: (value: number | number[]) => {
-    if (Array.isArray(value)) {
-      return rangeQuery('updatedAt', value);
-    } else {
-      return exactMatchQuery('updatedAt', value);
-    }
-  },
+  // createdAt: (value: string | string[]) => {
+  //   if (Array.isArray(value)) {
+  //     return dateRangeQuery('createdAt', value);
+  //   } else {
+  //     return exactMatchQuery('createdAt', value);
+  //   }
+  // },
+  // updatedAt: (value: string | string[]) => {
+  //   if (Array.isArray(value)) {
+  //     return dateRangeQuery('updatedAt', value);
+  //   } else {
+  //     return exactMatchQuery('updatedAt', value);
+  //   }
+  // },
 };

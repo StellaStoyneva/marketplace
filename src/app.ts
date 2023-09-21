@@ -8,16 +8,13 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod';
-import { CollectionEnum } from './db/enum/collection.enum';
-import { addOrder } from './features/orders/routes/add.order.route';
-import { getOrders } from './features/orders/routes/getOrders.order.route';
 import {
-  countProducts,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-} from './features/products/routes';
-import { initiateDb, authenticationPlugin, enumsPlugin } from './plugins';
+  initiateDb,
+  authenticationPlugin,
+  enumsPlugin,
+  addServices,
+} from './plugins';
+import { registerRoutes } from '@utils/registerRoutes';
 
 // const {
 //   MONGO_HOST = 'localhost',
@@ -51,14 +48,10 @@ export const create = async () => {
   await app.register(initiateDb, { url: MONGO_URL });
   await app.register(enumsPlugin);
   app.register(authenticationPlugin);
+  app.register(addServices);
 
-  app.register(countProducts, { prefix: '/products' });
-  app.register(addProduct, { prefix: '/products' });
-  app.register(updateProduct, { prefix: '/products' });
-  app.register(deleteProduct, { prefix: '/products' });
+  registerRoutes(app);
   app.register(registerUser, { prefix: '/auth' });
   app.register(loginUser, { prefix: '/auth' });
-  app.register(addOrder, { prefix: '/order' });
-  //app.register(getOrders, { prefix: '/order' });
   return app;
 };

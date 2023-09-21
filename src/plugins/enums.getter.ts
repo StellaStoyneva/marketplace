@@ -1,10 +1,17 @@
 import { FastifyPluginCallback } from 'fastify';
 import fp from 'fastify-plugin';
+import { ObjectId } from 'mongodb';
+import { DeliveryStatusEnum } from 'src/constants/enum';
 import { CollectionEnum } from 'src/db/enum/collection.enum';
 
 declare module 'fastify' {
   interface FastifyInstance {
-    deliveryStatusEnum: any;
+    deliveryStatusEnum?: Record<string, ObjectId>;
+    deliveryTypeEnum?: Record<string, ObjectId>;
+    offerTypeEnum?: Record<string, ObjectId>;
+    paymentMethodEnum?: Record<string, ObjectId>;
+    productTypesEnum?: Record<string, ObjectId>;
+    userRolesEnum?: Record<string, ObjectId>;
   }
 }
 
@@ -13,42 +20,61 @@ const enumsPlugin: FastifyPluginCallback = async function enumsPlugin(
   opts,
   done
 ) {
-  const deliveryStatusEnum = fastify
-    .db(process.env.DB_NAME as string)
-    ?.collection(CollectionEnum.EnumDeliveryStatus)
-    .find();
+  const getEnum = async (dbCollection: CollectionEnum) => {
+    const errorMsg = `Enum does not exist for ${dbCollection}`;
 
-  const deliveryTypeEnum = fastify
-    .db(process.env.DB_NAME as string)
-    ?.collection(CollectionEnum.EnumDeliveryType)
-    .find();
+    try {
+      const foundEnum = fastify
+        .db(process.env.DB_NAME as string)
+        ?.collection(dbCollection)
+        .find();
 
-  const offerTypeEnum = fastify
-    .db(process.env.DB_NAME as string)
-    ?.collection(CollectionEnum.EnumOfferType)
-    .find();
+      if (!foundEnum) {
+        throw new Error(errorMsg);
+      }
+      const enumArr = await foundEnum?.toArray();
+      return enumArr.reduce(
+        (
+          acc: {
+            [x: string]: ObjectId;
+          },
+          element
+        ) => {
+          acc[element.value] = element._id;
+          return acc;
+        },
+        {}
+      );
+    } catch (e) {
+      console.error(e);
+      done(new Error(errorMsg));
+    }
+  };
 
-  const paymentMethodEnum = fastify
-    .db(process.env.DB_NAME as string)
-    ?.collection(CollectionEnum.EnumPaymentMethod)
-    .find();
-
-  const productTypesEnum = fastify
-    .db(process.env.DB_NAME as string)
-    ?.collection(CollectionEnum.EnumProductTypes)
-    .find();
-
-  const userRolesEnum = fastify
-    .db(process.env.DB_NAME as string)
-    ?.collection(CollectionEnum.EnumUserRoles)
-    .find();
-
-  fastify.decorate('deliveryStatusEnum', await deliveryStatusEnum?.toArray());
-  fastify.decorate('deliveryTypeEnum', await deliveryTypeEnum?.toArray());
-  fastify.decorate('offerTypeEnum', await offerTypeEnum?.toArray());
-  fastify.decorate('paymentMethodEnum', await paymentMethodEnum?.toArray());
-  fastify.decorate('productTypesEnum', await productTypesEnum?.toArray());
-  fastify.decorate('userRolesEnum', await userRolesEnum?.toArray());
+  fastify.decorate(
+    'deliveryStatusEnum',
+    await getEnum(CollectionEnum.EnumDeliveryStatus)
+  );
+  fastify.decorate(
+    'deliveryTypeEnum',
+    await getEnum(CollectionEnum.EnumDeliveryType)
+  );
+  fastify.decorate(
+    'offerTypeEnum',
+    await getEnum(CollectionEnum.EnumOfferType)
+  );
+  fastify.decorate(
+    'paymentMethodEnum',
+    await getEnum(CollectionEnum.EnumPaymentMethod)
+  );
+  fastify.decorate(
+    'productTypesEnum',
+    await getEnum(CollectionEnum.EnumProductTypes)
+  );
+  fastify.decorate(
+    'userRolesEnum',
+    await getEnum(CollectionEnum.EnumUserRoles)
+  );
 
   done();
 };

@@ -47,7 +47,8 @@ function createProductDocumentSeed(): IProduct {
     images: [faker.internet.url(), faker.internet.url(), faker.internet.url()],
     video: faker.internet.url(),
     returnPolicy: {
-      durationDays: faker.number.int({ min: 14 }),
+      daysForReturn: faker.number.int({ min: 14 }),
+      isReturnable: faker.helpers.arrayElement([true, false]),
       url: faker.internet.url(),
       description: faker.string.alphanumeric({ length: { min: 3, max: 460 } }),
     },
@@ -71,10 +72,7 @@ function createProductDocumentSeed(): IProduct {
       faker.database.mongodbObjectId(),
       faker.database.mongodbObjectId(),
     ],
-    productTypes: [
-      faker.database.mongodbObjectId(),
-      faker.database.mongodbObjectId(),
-    ],
+    productType: faker.database.mongodbObjectId(),
     storeName: faker.string.alphanumeric(),
     createdAt: faker.date.past(),
     updatedAt: faker.helpers.arrayElement([faker.date.past(), null]),

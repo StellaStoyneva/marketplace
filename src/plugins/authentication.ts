@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   FastifyPluginCallback,
   FastifySchema,
@@ -6,7 +7,6 @@ import {
 } from 'fastify';
 import fp from 'fastify-plugin';
 import fastifyJwt from '@fastify/jwt';
-import { UserRoleEnum } from 'src/constants/enum';
 import { ObjectId } from 'mongodb';
 import { IncomingMessage } from 'http';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
@@ -46,8 +46,8 @@ declare module 'fastify' {
       >,
       reply: FastifyReply,
       coll: string,
-      query: Record<string, ObjectId>
-    ) => Promise<void>;
+      query: { _id: ObjectId }
+    ) => Promise<boolean>;
   }
 }
 
@@ -83,7 +83,6 @@ const authenticationPlugin: FastifyPluginCallback =
 
         try {
           await request.jwtVerify();
-          //console.log('req user', request.user);
         } catch (err) {
           reply.send(err);
         }
@@ -94,16 +93,18 @@ const authenticationPlugin: FastifyPluginCallback =
       'authorizeStoreAdmin',
       async function authorizeStoreAdmin(request, reply, done) {
         try {
+          console.log(request.user);
+
           await request.jwtVerify();
 
-          if (request.user.role !== UserRoleEnum.StoreAdmin) {
-            throw new Error(
-              'User is not authorized for this operation. User must have store admin rights'
-            );
+          if (request.user.role !== String(fastify.userRolesEnum!.storeAdmin)) {
+            done(new Error(authenticationErrors.notStoreAdmin));
+            throw new Error(authenticationErrors.notStoreAdmin);
           }
           done();
         } catch (err) {
           reply.send(err);
+          return;
         }
       }
     );
@@ -116,13 +117,14 @@ const authenticationPlugin: FastifyPluginCallback =
         coll,
         query
       ) {
+        let isAuthorized = false;
+
         try {
           await request.jwtVerify();
 
-          if (request.user.role !== UserRoleEnum.StoreAdmin) {
-            throw new Error(
-              'User is not authorized for this operation. User must have store admin rights'
-            );
+          if (request.user.role !== String(fastify.userRolesEnum!.storeAdmin)) {
+            done(new Error(authenticationErrors.notStoreAdmin));
+            throw new Error(authenticationErrors.notStoreAdmin);
           }
 
           const itemInParams = await fastify
@@ -130,30 +132,26 @@ const authenticationPlugin: FastifyPluginCallback =
             ?.collection(coll)
             .findOne(query);
 
-          if (request.user.store !== itemInParams?.store) {
-            throw new Error('Unauthorized store admin');
+          if (request.user.store !== String(itemInParams?.store)) {
+            done(new Error(authenticationErrors.notStoreAdminToSameStore));
+            throw new Error(authenticationErrors.notStoreAdminToSameStore);
           }
+
+          isAuthorized = true;
         } catch (err) {
           reply.send(err);
+          isAuthorized = false;
         }
+        return isAuthorized;
       }
     );
-
-    // fastify.decorateRequest('generateToken', function (this: FastifyRequest) {
-    //   const token = fastify.jwt.sign(
-    //     {
-    //       id: String(this.user._id),
-    //       username: this.user.username,
-    //     },
-    //     {
-    //       jti: String(Date.now()),
-    //       expiresIn: process.env.JWT_EXPIRE_IN,
-    //     }
-    //   );
-    //   return token;
-    // });
 
     done();
   };
 
 export default fp(authenticationPlugin);
+
+enum authenticationErrors {
+  notStoreAdmin = 'User is not authorized for this operation. User must have store admin rights',
+  notStoreAdminToSameStore = 'Unauthorized store admin',
+}

@@ -3,13 +3,13 @@ import { ObjectId } from 'mongodb';
 export interface IProduct {
   name: string;
   sku: string;
+  description?: string;
   singlePriceBeforeVAT: number;
   singlePriceWithVAT: number;
   availableQuantity: number;
   store: ObjectId | string;
   offer: null | ObjectId | string;
   isPromoted?: boolean;
-  description?: string;
   images: string[];
   video?: string;
   returnPolicy: {
@@ -18,7 +18,7 @@ export interface IProduct {
     description?: string;
     url?: string;
   };
-  guaranteeDurationMonths?: number;
+  guaranteeDurationMonths: number;
   rating?: {
     sum: number;
     count: number;
@@ -35,7 +35,7 @@ export interface IProduct {
     author: { name: string; id: ObjectId | string };
   }[];
   productCategories: ObjectId | string[];
-  productTypes: ObjectId | string[];
+  productType: ObjectId | string;
   storeName: string;
   createdAt: Date;
   updatedAt: Date | null;

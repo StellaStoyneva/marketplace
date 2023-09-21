@@ -5,12 +5,14 @@ import {
   PaymentMethodTypeEnum,
 } from 'src/constants/enum';
 import { IAddress } from 'src/constants/types/address';
+import { IOrderItem } from './orderItem.entity';
 
 /**
   if order to multiple stores and payment cash - accumulate here
   on update check if totalPaid === finalPriceWithVAT
   => is_paid = totalPaid === finalPriceWithVAT
    */
+
 export interface IOrder {
   /**Payment */
   transactions: string[];
@@ -35,7 +37,7 @@ export interface IOrder {
   ordersToStore: {
     /**Store - items */
     store: ObjectId | string;
-    items: ObjectId[] | string[];
+    items: IOrderItem[];
     /**Payment */
     finalPriceBeforeVAT: number;
     finalPriceWithVAT: number;

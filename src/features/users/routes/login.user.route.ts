@@ -41,7 +41,7 @@ export const loginUser: FastifyPluginCallback<
         {
           _id: String(existingUser._id),
           email: existingUser.email,
-          role: existingUser.role,
+          role: String(existingUser.role),
           store: existingUser.store,
         },
         {

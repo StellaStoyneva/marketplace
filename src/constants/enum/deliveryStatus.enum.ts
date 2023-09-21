@@ -13,3 +13,12 @@ export enum ReturnStatusEnum {
   refundInitiated = 'refund initiated',
   refundCompleted = 'refund completed',
 }
+
+export const DeliveryStatus = {
+  ordered: 'ordered',
+  delivered: 'delivered', // return date should be calculated
+  shipped: 'shipped',
+  canceled: 'canceled',
+};
+
+export type TDeliveryStatus = 'ordered' | 'delivered' | 'shipped' | 'canceled';

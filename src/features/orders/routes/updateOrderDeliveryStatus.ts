@@ -1,12 +1,10 @@
 import { FastifyPluginCallback, RawServerDefault } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { MongoError, ObjectId } from 'mongodb';
-import { DeliveryStatusEnum } from 'src/constants/enum';
+import { ObjectId } from 'mongodb';
+import { DeliveryStatusEnum, OrderItemLifeCycleEnum } from 'src/constants/enum';
 import { CollectionEnum } from 'src/db/enum/collection.enum';
-import { IUser } from 'src/plugins/authentication';
-import { object, z } from 'zod';
+import { z } from 'zod';
 import { flags } from '../constants/flags';
-import { insertOrderSchema } from '../schemas/insertMany.schema';
 import { updateDeliveryStatusSchema } from '../schemas/updateDeliveryStatus.schema';
 
 /**
@@ -40,13 +38,14 @@ export const updateOrderDeliveryStatus: FastifyPluginCallback<
       );
 
       const updatedBy = new ObjectId(req.user._id);
-      const deliveryStatusId = fastify.deliveryStatusEnum.find(
-        (element: any) => element.status === req.body.deliveryStatus
-      )._id;
+      const deliveryStatusId =
+        fastify.deliveryStatusEnum && req.body.deliveryStatus
+          ? fastify.deliveryStatusEnum[req.body.deliveryStatus]
+          : null;
 
       const updatedAt = 0; //new Date();
       if (
-        req.body.deliveryStatus === DeliveryStatusEnum.shippedBack &&
+        req.body.deliveryStatus === OrderItemLifeCycleEnum.shippedBack &&
         !req.body.items
       ) {
         throw new Error('Invalid request body. Returned items required');
@@ -61,7 +60,7 @@ export const updateOrderDeliveryStatus: FastifyPluginCallback<
         // find order and update their return
         // update order with the delivery status and the rest of the object
       }
-      if (req.body.deliveryStatus === DeliveryStatusEnum.deliveredBack) {
+      if (req.body.deliveryStatus === OrderItemLifeCycleEnum.deliveredBack) {
         // transaction
         // find order
         // loop through all items and update their return deadline

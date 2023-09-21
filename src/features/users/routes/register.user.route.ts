@@ -34,10 +34,12 @@ export const registerUser: FastifyPluginCallback<
       }
 
       const hashedPass = await hashPassword(password);
+      console.log(fastify.userRolesEnum, fastify.userRolesEnum![role]);
+
       const body = {
         email: req.body.email,
         password: hashedPass,
-        role: req.body.role,
+        role: fastify.userRolesEnum![role],
         store: req.body.store,
       };
 

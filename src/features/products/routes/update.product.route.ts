@@ -1,14 +1,9 @@
-import {
-  FastifyBaseLogger,
-  FastifyPluginCallback,
-  RawServerDefault,
-} from 'fastify';
+import { FastifyPluginCallback, RawServerDefault } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { FastifyInstance } from 'fastify/types/instance';
-import { IncomingMessage, ServerResponse } from 'http';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
-import { insertOneBodySchema } from '../schemas';
+import { updateProductBodySchema } from '../schemas';
+import { processProductUpdateRequestBody } from '../utils';
 
 export const updateProduct: FastifyPluginCallback<
   Record<never, never>,
@@ -20,47 +15,24 @@ export const updateProduct: FastifyPluginCallback<
     {
       schema: {
         params: z.object({ id: z.string() }),
-        body: insertOneBodySchema,
+        body: updateProductBodySchema,
       },
     },
-    async function updateProductRoute(req, reply) {
+    async (req, reply) => {
       const productId = new ObjectId(req.params.id);
+
       fastify.authorizeStoreAdminForSpecificStore(req, reply, 'products', {
         _id: productId,
       });
-      const updatedBy = new ObjectId(req.user._id);
 
-      return await fastify
-        .db(process.env.DB_NAME as string)
-        ?.collection('products')
-        .updateOne(
-          { _id: productId },
-          { $set: { ...req.body, updatedAt: new Date(), updatedBy } }
-        );
+      const data = processProductUpdateRequestBody(req.user, req.body);
+
+      return await fastify.services.productService.updateProduct(
+        productId,
+        data
+      );
     }
   );
 
   done();
 };
-
-async function updateProductHandler(
-  fastify: FastifyInstance<
-    RawServerDefault,
-    IncomingMessage,
-    ServerResponse<IncomingMessage>,
-    FastifyBaseLogger,
-    ZodTypeProvider
-  >,
-  params: Record<string, string>,
-  body: Record<string, any>
-) {
-  const updatedBy = new ObjectId();
-
-  return await fastify
-    .db(process.env.DB_NAME as string)
-    ?.collection('products')
-    .updateOne(
-      { _id: new ObjectId(params.id) },
-      { $set: { ...body, updatedAt: new Date(), updatedBy } }
-    );
-}

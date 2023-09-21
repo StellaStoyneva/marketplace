@@ -1,5 +1,4 @@
 import { ObjectId } from 'mongodb';
-import { UserRoleEnum } from 'src/constants/enum';
 import { IAddress } from 'src/constants/types/address';
 
 export interface IUser {
@@ -7,7 +6,7 @@ export interface IUser {
   email: string;
   phoneNumber: string;
   address?: IAddress;
-  role: UserRoleEnum;
+  role: ObjectId;
   store?: ObjectId | string;
   password: string;
   createdAt: Date;

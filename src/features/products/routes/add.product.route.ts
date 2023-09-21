@@ -1,44 +1,24 @@
 import { FastifyPluginCallback, RawServerDefault } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { ObjectId } from 'mongodb';
-import { insertOneBodySchema } from '../schemas';
+import { insertProductsBodySchema } from '../schemas';
+import { processNewOrderRequest } from './../utils';
 
-export const addProduct: FastifyPluginCallback<
+export const addProducts: FastifyPluginCallback<
   Record<never, never>,
   RawServerDefault,
   ZodTypeProvider
 > = (fastify, _opts, done) => {
-
   fastify.post(
     '/',
     {
       onRequest: [fastify.authorizeStoreAdmin],
       schema: {
-        body: insertOneBodySchema,
+        body: insertProductsBodySchema,
       },
     },
     async (req) => {
-      const store = new ObjectId(req.user.store);
-      const createdBy = new ObjectId(req.user._id);
-      const resultBody = req.body;
-      if (Array.isArray(resultBody)) {
-        const arr = resultBody.map((res) => ({
-          ...res,
-          isPromoted:
-            res.isPromoted && res.isPromoted === 'true' ? true : false,
-          productCategories: res.productCategories.map(
-            (cat: string) => new ObjectId(cat)
-          ),
-          productTypes: new ObjectId(res.productTypes),
-          daysForReturn: res.daysForReturn,
-          isReturnable: !!res.daysForReturn,
-          createdAt: new Date(),
-          store,
-          createdBy,
-        }));
-
-        return await fastify.services.productService.addProducts(arr)
-      }
+      const productsArray = processNewOrderRequest(req.user, req.body);
+      return await fastify.services.productService.addProducts(productsArray);
     }
   );
 
