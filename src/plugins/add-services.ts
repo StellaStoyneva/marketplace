@@ -13,18 +13,21 @@ import {
   IQueryStringProduct,
   IUpdateProduct,
 } from 'src/features/products';
-import { productService as initiateProductService } from 'src/features/products/product.service';
+import { productService as initiateProductService } from 'src/features/products/services/product.service';
+import { IUser } from './authentication';
 
 declare module 'fastify' {
   interface FastifyInstance {
     services: {
       productService: {
         addProducts: (
+          user: IUser,
           products: IInsertProduct[]
         ) => Promise<InsertManyResult<Document>>;
         updateProduct: (
-          id: ObjectId,
-          products: IUpdateProduct
+          productId: ObjectId,
+          user: IUser,
+          data: IUpdateProduct
         ) => Promise<UpdateResult<Document>>;
         deleteProduct: (id: ObjectId) => Promise<DeleteResult>;
         getProducts: (

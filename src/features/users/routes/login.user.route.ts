@@ -35,8 +35,6 @@ export const loginUser: FastifyPluginCallback<
         return;
       }
 
-      //console.log('existingUser', existingUser);
-
       const token = fastify.jwt.sign(
         {
           _id: String(existingUser._id),

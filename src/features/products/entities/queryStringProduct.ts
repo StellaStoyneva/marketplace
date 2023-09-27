@@ -4,7 +4,7 @@ export interface IQueryStringProduct {
   name?: string;
   sku?: string;
   store?: ObjectId | string;
-  offer?: string;
+  offer?: string | null;
   isPromoted?: number;
   productCategories?: ObjectId | string;
   productType?: ObjectId | string;

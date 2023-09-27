@@ -18,7 +18,6 @@ export const registerUser: FastifyPluginCallback<
     },
     async function handler(req, reply) {
       const { email, password, role, store } = req.body;
-      console.log(req.body);
       const existingUser = await fastify
         .db(process.env.DB_NAME as string)
         ?.collection('users')
@@ -34,7 +33,6 @@ export const registerUser: FastifyPluginCallback<
       }
 
       const hashedPass = await hashPassword(password);
-      console.log(fastify.userRolesEnum, fastify.userRolesEnum![role]);
 
       const body = {
         email: req.body.email,

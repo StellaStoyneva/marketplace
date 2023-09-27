@@ -13,6 +13,7 @@ export const updateProduct: FastifyPluginCallback<
   fastify.patch(
     '/:id',
     {
+      onRequest: [fastify.authenticate, fastify.authorizeStoreAdmin],
       schema: {
         params: z.object({ id: z.string() }),
         body: updateProductBodySchema,
@@ -21,15 +22,19 @@ export const updateProduct: FastifyPluginCallback<
     async (req, reply) => {
       const productId = new ObjectId(req.params.id);
 
-      fastify.authorizeStoreAdminForSpecificStore(req, reply, 'products', {
-        _id: productId,
-      });
-
-      const data = processProductUpdateRequestBody(req.user, req.body);
+      await fastify.authorizeStoreAdminForSpecificStore(
+        req,
+        reply,
+        'products',
+        {
+          _id: productId,
+        }
+      );
 
       return await fastify.services.productService.updateProduct(
         productId,
-        data
+        req.user,
+        req.body
       );
     }
   );

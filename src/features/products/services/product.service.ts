@@ -1,17 +1,24 @@
 import { Db, ObjectId } from 'mongodb';
-import { CollectionEnum } from 'src/db/enum/collection.enum';
+import { CollectionEnum } from '../../../db/enum/collection.enum';
+import { IUser } from 'src/plugins/authentication';
 import {
   IInsertProduct,
   IQueryStringProduct,
   IUpdateProduct,
-} from './entities';
-import { productsQueryFilter } from './utils/queryFilter';
+} from '../entities';
+import {
+  processNewOrderRequest,
+  processProductUpdateRequestBody,
+} from '../utils';
+import { productsQueryFilter } from '../utils/queryFilter';
 
 export const productService = function (db: Db) {
   const collection = db.collection(CollectionEnum.Products);
 
-  async function addProducts(products: IInsertProduct[]) {
-    return await collection.insertMany(products);
+  async function addProducts(user: IUser, data: IInsertProduct[]) {
+    const productsArray = processNewOrderRequest(user, data);
+
+    return await collection.insertMany(productsArray);
   }
 
   async function getProducts(queryString: IQueryStringProduct) {
@@ -27,13 +34,18 @@ export const productService = function (db: Db) {
     return (await collection.find(resultQuery)?.toArray())?.slice(0, 5);
   }
 
-  async function updateProduct(id: ObjectId, products: IUpdateProduct) {
-    return await collection.updateOne({ _id: id }, { $set: products });
+  async function updateProduct(
+    productId: ObjectId,
+    user: IUser,
+    data: IUpdateProduct
+  ) {
+    const product = processProductUpdateRequestBody(user, data);
+
+    return await collection.updateOne({ _id: productId }, { $set: product });
   }
 
   async function deleteProduct(id: ObjectId) {
     const result = await collection.deleteOne({ _id: id });
-    console.log({ result });
 
     return result;
   }

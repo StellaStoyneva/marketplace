@@ -4,7 +4,7 @@ export const queryStringProductSchema = z.object({
   name: z.string().optional(),
   sku: z.string().optional(),
   store: z.string().optional(),
-  offer: z.string().optional(), //z.nativeEnum(OfferTypeEnum).nullish().optional(),
+  offer: z.string().optional().nullish(),
   isPromoted: z.number().coerce().optional(),
   productCategories: z.string().optional(),
   productType: z.string().optional(),

@@ -1,7 +1,7 @@
 import { FastifyPluginCallback, RawServerDefault } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ObjectId } from 'mongodb';
-import { CollectionEnum } from 'src/db/enum/collection.enum';
+import { CollectionEnum } from '../../../db/enum/collection.enum';
 import { z } from 'zod';
 
 export const deleteProduct: FastifyPluginCallback<
@@ -12,6 +12,7 @@ export const deleteProduct: FastifyPluginCallback<
   fastify.delete(
     '/:id',
     {
+      onRequest: [fastify.authenticate, fastify.authorizeStoreAdmin],
       schema: {
         params: z.object({ id: z.string() }),
       },
@@ -19,7 +20,7 @@ export const deleteProduct: FastifyPluginCallback<
     async (req, reply) => {
       const productId = new ObjectId(req.params.id);
 
-      const isAuthorized = await fastify.authorizeStoreAdminForSpecificStore(
+      await fastify.authorizeStoreAdminForSpecificStore(
         req,
         reply,
         CollectionEnum.Products,
@@ -28,12 +29,7 @@ export const deleteProduct: FastifyPluginCallback<
         }
       );
 
-      if (!isAuthorized) {
-        return;
-      }
-      return await fastify.services.productService?.deleteProduct(productId);
-
-      // return await fastify.services.productService?.deleteProduct(productId);
+      return await fastify.services.productService.deleteProduct(productId);
     }
   );
 

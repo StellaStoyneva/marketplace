@@ -47,7 +47,7 @@ declare module 'fastify' {
       reply: FastifyReply,
       coll: string,
       query: { _id: ObjectId }
-    ) => Promise<boolean>;
+    ) => Promise<void>;
   }
 }
 
@@ -71,7 +71,7 @@ const authenticationPlugin: FastifyPluginCallback =
 
     fastify.register(fastifyJwt, {
       secret: JWT_SECRET as string,
-      trusted: function isTrusted(request, decodedToken) {
+      trusted: function isTrusted(_request, decodedToken) {
         return !revokedTokens.has(decodedToken.jti);
       },
     });
@@ -79,8 +79,6 @@ const authenticationPlugin: FastifyPluginCallback =
     fastify.decorate(
       'authenticate',
       async function authenticate(request, reply) {
-        console.log('authenticate');
-
         try {
           await request.jwtVerify();
         } catch (err) {
@@ -91,21 +89,12 @@ const authenticationPlugin: FastifyPluginCallback =
 
     fastify.decorate(
       'authorizeStoreAdmin',
-      async function authorizeStoreAdmin(request, reply, done) {
-        try {
-          console.log(request.user);
-
-          await request.jwtVerify();
-
-          if (request.user.role !== String(fastify.userRolesEnum!.storeAdmin)) {
-            done(new Error(authenticationErrors.notStoreAdmin));
-            throw new Error(authenticationErrors.notStoreAdmin);
-          }
-          done();
-        } catch (err) {
-          reply.send(err);
-          return;
+      async function authorizeStoreAdmin(request, _reply, done) {
+        if (request.user.role !== String(fastify.userRolesEnum!.storeAdmin)) {
+          done(new Error(authenticationErrors.notStoreAdmin));
+          throw new Error(authenticationErrors.notStoreAdmin);
         }
+        done();
       }
     );
 
@@ -113,36 +102,19 @@ const authenticationPlugin: FastifyPluginCallback =
       'authorizeStoreAdminForSpecificStore',
       async function authorizeStoreAdminForSpecificStore(
         request,
-        reply,
+        _reply,
         coll,
         query
       ) {
-        let isAuthorized = false;
+        const itemInParams = await fastify
+          .db(process.env.DB_NAME as string)
+          ?.collection(coll)
+          .findOne(query);
 
-        try {
-          await request.jwtVerify();
-
-          if (request.user.role !== String(fastify.userRolesEnum!.storeAdmin)) {
-            done(new Error(authenticationErrors.notStoreAdmin));
-            throw new Error(authenticationErrors.notStoreAdmin);
-          }
-
-          const itemInParams = await fastify
-            .db(process.env.DB_NAME as string)
-            ?.collection(coll)
-            .findOne(query);
-
-          if (request.user.store !== String(itemInParams?.store)) {
-            done(new Error(authenticationErrors.notStoreAdminToSameStore));
-            throw new Error(authenticationErrors.notStoreAdminToSameStore);
-          }
-
-          isAuthorized = true;
-        } catch (err) {
-          reply.send(err);
-          isAuthorized = false;
+        if (request.user.store !== String(itemInParams?.store)) {
+          done(new Error(authenticationErrors.notStoreAdminToSameStore));
+          throw new Error(authenticationErrors.notStoreAdminToSameStore);
         }
-        return isAuthorized;
       }
     );
 

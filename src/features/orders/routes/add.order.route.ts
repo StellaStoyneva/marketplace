@@ -150,8 +150,6 @@ export const addOrder: FastifyPluginCallback<
 };
 
 const getOrderItem = (item: IOrderItem) => {
-  console.log('getOrderItem', item);
-
   const currentDeliveryStatus = DeliveryStatusEnum.ordered;
   const {
     _id,

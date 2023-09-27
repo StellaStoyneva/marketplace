@@ -1,7 +1,6 @@
 import { FastifyPluginCallback, RawServerDefault } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { insertProductsBodySchema } from '../schemas';
-import { processNewOrderRequest } from './../utils';
 
 export const addProducts: FastifyPluginCallback<
   Record<never, never>,
@@ -11,15 +10,13 @@ export const addProducts: FastifyPluginCallback<
   fastify.post(
     '/',
     {
-      onRequest: [fastify.authorizeStoreAdmin],
+      onRequest: [fastify.authenticate, fastify.authorizeStoreAdmin],
       schema: {
         body: insertProductsBodySchema,
       },
     },
-    async (req) => {
-      const productsArray = processNewOrderRequest(req.user, req.body);
-      return await fastify.services.productService.addProducts(productsArray);
-    }
+    async (req) =>
+      await fastify.services.productService.addProducts(req.user, req.body)
   );
 
   done();
