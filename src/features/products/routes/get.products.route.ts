@@ -14,9 +14,7 @@ export const getProducts: FastifyPluginCallback<
         querystring: queryStringProductSchema,
       },
     },
-    async (req) => {
-      return await fastify.services.productService.getProducts(req.query);
-    }
+    async (req) => await fastify.services.productService.getProducts(req.query)
   );
 
   done();

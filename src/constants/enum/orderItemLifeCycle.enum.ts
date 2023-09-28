@@ -3,6 +3,6 @@ export enum OrderItemLifeCycleEnum {
   shipped = 'shipped',
   delivered = 'delivered', // return date should be calculated
   canceled = 'canceled', // rollback quantity
-  shippedBack = 'returned', // refund date should be calculated
-  deliveredBack = 'refunded',
+  shippedBack = 'shippedBack', // refund date should be calculated
+  deliveredBack = 'deliveredBack',
 }

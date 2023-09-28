@@ -91,7 +91,6 @@ const authenticationPlugin: FastifyPluginCallback =
       'authorizeStoreAdmin',
       async function authorizeStoreAdmin(request, _reply, done) {
         if (request.user.role !== String(fastify.userRolesEnum!.storeAdmin)) {
-          done(new Error(authenticationErrors.notStoreAdmin));
           throw new Error(authenticationErrors.notStoreAdmin);
         }
         done();
@@ -112,9 +111,9 @@ const authenticationPlugin: FastifyPluginCallback =
           .findOne(query);
 
         if (request.user.store !== String(itemInParams?.store)) {
-          done(new Error(authenticationErrors.notStoreAdminToSameStore));
           throw new Error(authenticationErrors.notStoreAdminToSameStore);
         }
+        done();
       }
     );
 

@@ -14,11 +14,19 @@ import {
   IUpdateProduct,
 } from 'src/features/products';
 import { productService as initiateProductService } from 'src/features/products/services/product.service';
+import { orderService as initiateOrderService } from 'src/features/orders/services/order.service';
 import { IUser } from './authentication';
+import { IRequestBodyInsertOrder } from 'src/features/orders/entities';
 
 declare module 'fastify' {
   interface FastifyInstance {
     services: {
+      orderService: {
+        addOrder: (
+          user: IUser,
+          data: IRequestBodyInsertOrder
+        ) => Promise<unknown>;
+      };
       productService: {
         addProducts: (
           user: IUser,
@@ -38,18 +46,22 @@ declare module 'fastify' {
   }
 }
 
-const dbPlugin: FastifyPluginCallback = async function dbPlugin(
+const servicesPlugin: FastifyPluginCallback = async function servicesPlugin(
   fastify,
   _opts,
   done
 ) {
   const db = fastify.db(process.env.DB_NAME as string);
+  const dbClient = fastify.dbClient;
+  const deliveryStatusEnum = fastify.deliveryStatusEnum;
 
   if (db) {
     const productService = initiateProductService(db);
+    const orderService = initiateOrderService(db, dbClient, deliveryStatusEnum);
 
     const services = {
       productService,
+      orderService,
     };
 
     fastify.decorate('services', services);
@@ -60,4 +72,4 @@ const dbPlugin: FastifyPluginCallback = async function dbPlugin(
   }
 };
 
-export default fp(dbPlugin);
+export default fp(servicesPlugin);

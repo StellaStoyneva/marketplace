@@ -26,6 +26,8 @@ export interface IOrderItem {
   isReturned?: boolean;
   isRefundable?: boolean;
   isRefunded?: boolean;
+  isCancelable?: boolean;
+  isCanceled?: boolean;
   returnDeadline?: Date;
   refundDeadline?: Date;
   status?: OrderItemLifeCycleEnum;

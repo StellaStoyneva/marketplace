@@ -75,6 +75,18 @@ const enumsPlugin: FastifyPluginCallback = async function enumsPlugin(
     'userRolesEnum',
     await getEnum(CollectionEnum.EnumUserRoles)
   );
+  fastify.decorate(
+    'productCategoriesEnum',
+    await getEnum(CollectionEnum.ProductCategories)
+  );
+  fastify.decorate(
+    'productTypeEnum',
+    await getEnum(CollectionEnum.EnumProductTypes)
+  );
+  fastify.decorate(
+    'orderItemLifeCycleEnum',
+    await getEnum(CollectionEnum.EnumOrderItemLifeCycle)
+  );
 
   done();
 };

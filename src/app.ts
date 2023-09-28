@@ -16,13 +16,6 @@ import {
 } from './plugins';
 import { registerRoutes } from '@utils/registerRoutes';
 
-// const {
-//   MONGO_HOST = 'localhost',
-//   MONGO_PORT = '27017',
-//   MONGO_USER = 'contrast',
-//   MONGO_PASS = 'password',
-// } = process.env;
-
 const { MONGO_HOST, MONGO_PORT, MONGO_USER, MONGO_PASS, MONGO_PROTOCOL } =
   process.env;
 
@@ -35,7 +28,6 @@ export const create = async () => {
 
   app.register(fastifyQs, {});
 
-  // Add schema validator and serializer
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
   app.setNotFoundHandler(function custom404(_request, reply) {

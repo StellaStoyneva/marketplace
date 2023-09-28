@@ -25,16 +25,4 @@ export const flags = {
     isRefundable: false,
     isCanceled: true,
   },
-  // [DeliveryStatusEnum.shippedBack]: {
-  //   isReturned: true,
-  //   isCancelable: false,
-  //   isRefundable: true,
-  //   isCanceled: false,
-  // },
-  // [DeliveryStatusEnum.deliveredBack]: {
-  //   isReturned: true,
-  //   isCancelable: false,
-  //   isRefundable: true,
-  //   isCanceled: false,
-  // },
 };

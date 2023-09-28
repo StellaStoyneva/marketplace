@@ -1,6 +1,8 @@
+import { ObjectId } from 'mongodb';
+
 const exactMatchQuery = (
   filter: keyof typeof productsQueryFilter,
-  value: string | boolean | number
+  value: string | boolean | number | ObjectId
 ) => {
   return { [filter]: { $eq: value } };
 };
@@ -34,11 +36,12 @@ export const productsQueryFilter = {
   //exact strings
   name: (value: string) => exactMatchQuery('name', value),
   sku: (value: string) => exactMatchQuery('sku', value),
-  store: (value: string) => exactMatchQuery('store', value),
-  offer: (value: string) => exactMatchQuery('offer', value),
+  store: (value: string) => exactMatchQuery('store', new ObjectId(value)),
+  offer: (value: string) => exactMatchQuery('offer', new ObjectId(value)),
   productCategories: (value: string) =>
-    exactMatchQuery('productCategories', value),
-  productTypes: (value: string) => exactMatchQuery('productTypes', value),
+    exactMatchQuery('productCategories', new ObjectId(value)),
+  productType: (value: string) =>
+    exactMatchQuery('productType', new ObjectId(value)),
   createdBy: (value: string) => exactMatchQuery('createdBy', value),
   updatedBy: (value: string) => exactMatchQuery('updatedBy', value),
 
@@ -75,7 +78,7 @@ export const productsQueryFilter = {
     }
   },
 
-  //range or exact Date
+  //TODO range or exact Date
   // createdAt: (value: string | string[]) => {
   //   if (Array.isArray(value)) {
   //     return dateRangeQuery('createdAt', value);

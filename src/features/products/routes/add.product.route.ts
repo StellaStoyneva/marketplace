@@ -15,8 +15,12 @@ export const addProducts: FastifyPluginCallback<
         body: insertProductsBodySchema,
       },
     },
-    async (req) =>
-      await fastify.services.productService.addProducts(req.user, req.body)
+    async (req) => {
+      return await fastify.services.productService.addProducts(
+        req.user,
+        req.body
+      );
+    }
   );
 
   done();

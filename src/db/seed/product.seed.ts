@@ -86,9 +86,3 @@ export const productsSeedData = faker.helpers.multiple(
     count: 26000,
   }
 );
-
-// export type ProductSchemaType = z.infer<typeof ProductSchema>;
-
-// export const productsSeedData = generateMock(ProductSchema, {
-//   seed: 26000,
-// });

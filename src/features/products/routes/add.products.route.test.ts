@@ -3,9 +3,9 @@ import { register } from '../../../extensions/zod';
 register();
 import { addProducts as addProductsRoute } from './add.product.route';
 import { addProductData } from '../__data__';
-import { testData } from '../../../tests.setup';
+import { testData } from '../../../../test';
 import { productService } from '../__mocks__';
-import { getBaseMockFastify } from '../../../tests.setup/fastify.mock';
+import { getBaseMockFastify } from '../../../../test/fastify.mock';
 
 const { storeAdminUserId1: userId, store1: store } = testData;
 
@@ -34,9 +34,5 @@ describe('add Product route handler', function () {
     expect(
       mockFastify.services.productService.addProducts.mock.calls[0][1][0]
     ).toMatchObject(addProductData.rawInputMatchObject);
-    // expect(mockFastify.db).toBeCalled();
-    // expect(collection).toBeCalled();
-    // expect(mockFastify.db.collection.insertMany).toBeCalled();
-    //expect(insertFn.mock.calls[0][0]).toMatchObject(body);
   });
 });

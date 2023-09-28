@@ -7,7 +7,7 @@ import {
   IUpdateProduct,
 } from '../entities';
 import {
-  processNewOrderRequest,
+  processNewProductRequest,
   processProductUpdateRequestBody,
 } from '../utils';
 import { productsQueryFilter } from '../utils/queryFilter';
@@ -16,7 +16,7 @@ export const productService = function (db: Db) {
   const collection = db.collection(CollectionEnum.Products);
 
   async function addProducts(user: IUser, data: IInsertProduct[]) {
-    const productsArray = processNewOrderRequest(user, data);
+    const productsArray = processNewProductRequest(user, data);
 
     return await collection.insertMany(productsArray);
   }
@@ -31,7 +31,7 @@ export const productService = function (db: Db) {
       };
     }, {});
 
-    return (await collection.find(resultQuery)?.toArray())?.slice(0, 5);
+    return await collection.find(resultQuery)?.toArray();
   }
 
   async function updateProduct(

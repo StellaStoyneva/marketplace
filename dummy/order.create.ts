@@ -15,7 +15,7 @@
     "paymentMethod": "",
     "invoiceAddress": {
         "streetAddress": "ul.Ivan Vazov 50",
-        "zipCode": 4000,
+        "zipCode": "4000",
         "city": "Plovdiv",
         "country": "Bulgaria"
     },
@@ -58,7 +58,7 @@
                 "email": "penka.genkova@gmail.com",
                 "address": {
                     "streetAddress": "ul.Veliko Tarnovo 95",
-                    "zipCode": 1008,
+                    "zipCode": "1008",
                     "city": "Sofia",
                     "country": "Bulgaria"
                 }
@@ -90,7 +90,7 @@
                 "email": "sst@gmail.com",
                 "address": {
                     "streetAddress": "ul.Veliko Tarnovo 95",
-                    "zipCode": 4508,
+                    "zipCode": "4508",
                     "city": "Sofia",
                     "country": "Bulgaria"
                 }

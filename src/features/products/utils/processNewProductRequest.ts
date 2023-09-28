@@ -2,7 +2,10 @@ import { ObjectId } from 'mongodb';
 import { IUser } from 'src/plugins/authentication';
 import { IInsertProduct } from '..';
 
-export const processNewOrderRequest = (user: IUser, data: IInsertProduct[]) => {
+export const processNewProductRequest = (
+  user: IUser,
+  data: IInsertProduct[]
+) => {
   const store = new ObjectId(user.store);
   const createdBy = new ObjectId(user._id);
 

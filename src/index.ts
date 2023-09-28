@@ -9,7 +9,7 @@ async function bootstrap() {
   try {
     await app.listen({ port: 5050, host: '0.0.0.0' });
 
-    console.log(`App is running on http://localhost:5050`);
+    app.log.info(`App is running on http://localhost:5050`);
   } catch (err) {
     app.log.error('Fastify ERROR', JSON.stringify(err));
     process.exit(1);

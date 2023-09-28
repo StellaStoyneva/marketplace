@@ -24,7 +24,7 @@ Sport: 64da3b612326f40077b91ae4
         "productCategories": [
             "64d616633fce5756116f4f91"
         ],
-        "productTypes": "64da22bb79c2ec46b8592466",
+        "productType": "64da22bb79c2ec46b8592466",
         "availableQuantity": 50,
         "singlePriceBeforeVAT": 10.00,
         "singlePriceWithVAT": 12.50,
@@ -39,7 +39,7 @@ Sport: 64da3b612326f40077b91ae4
             "64da3b612326f40077b91ae2",
             "64da3b612326f40077b91ae2"
         ],
-        "productTypes": "64da22bb79c2ec46b8592466",
+        "productType": "64da22bb79c2ec46b8592466",
         "availableQuantity": 300,
         "singlePriceBeforeVAT": 100.00,
         "singlePriceWithVAT": 125.00,
@@ -61,7 +61,7 @@ Sport: 64da3b612326f40077b91ae4
     "offer": "64d616633fce5756116f4f91",
     "isPromoted": false,
     "productCategories": ["64d616633fce5756116f4f91"],
-    "productTypes": "64da22bb79c2ec46b8592466",
+    "productType": "64da22bb79c2ec46b8592466",
     "availableQuantity": 50,
     "singlePriceBeforeVAT": 20.00,
     "singlePriceWithVAT": 25.00,
@@ -72,7 +72,7 @@ Sport: 64da3b612326f40077b91ae4
     "sku": '4444',
     "isPromoted": true,
     "productCategories": ["64da3b612326f40077b91ae4", "64da3b612326f40077b91ae2"],
-    "productTypes": "64da22bb79c2ec46b8592466",
+    "productType": "64da22bb79c2ec46b8592466",
     "availableQuantity": 50,
     "singlePriceBeforeVAT": 1000.00,
     "singlePriceWithVAT": 1250.00,

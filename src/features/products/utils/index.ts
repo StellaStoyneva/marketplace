@@ -1,4 +1,4 @@
-import { processNewOrderRequest } from './processNewOrderRequest';
+import { processNewProductRequest } from './processNewProductRequest';
 import { processProductUpdateRequestBody } from './processProductUpdateRequestBody';
 
-export { processNewOrderRequest, processProductUpdateRequestBody };
+export { processNewProductRequest, processProductUpdateRequestBody };

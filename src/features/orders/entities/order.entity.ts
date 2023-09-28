@@ -18,7 +18,7 @@ export interface IOrder {
   transactions: string[];
   totalPriceBeforeVAT: number;
   totalPriceWithVAT: number;
-  paymentMethod: PaymentMethodTypeEnum;
+  paymentMethod: string;
   invoiceAddress: IAddress;
   // handler
   is_paid: boolean;
