@@ -89,11 +89,11 @@ const authenticationPlugin: FastifyPluginCallback =
 
     fastify.decorate(
       'authorizeStoreAdmin',
-      async function authorizeStoreAdmin(request, _reply, done) {
+      async function authorizeStoreAdmin(request, reply, done) {
         if (request.user.role !== String(fastify.userRolesEnum!.storeAdmin)) {
+          reply.send(authenticationErrors.notStoreAdmin);
           throw new Error(authenticationErrors.notStoreAdmin);
         }
-        done();
       }
     );
 

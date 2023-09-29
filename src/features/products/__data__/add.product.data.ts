@@ -19,8 +19,6 @@ export const rawInputMatchObject = {
 export const rawInput = [
   {
     ...rawInputMatchObject,
-    offer: 'sale',
-
     productCategories: [new ObjectId()],
     productTypes: new ObjectId(),
   },

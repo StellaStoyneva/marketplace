@@ -15,7 +15,8 @@ export const processNewProductRequest = (
     productCategories: product.productCategories.map(
       (cat: string | ObjectId) => new ObjectId(cat)
     ),
-    productTypes: new ObjectId(product.productType),
+    productType: new ObjectId(product.productType),
+    offer: new ObjectId(product.offer),
     returnPolicy: {
       daysForReturn: product.returnPolicy.daysForReturn ?? 0,
       isReturnable:

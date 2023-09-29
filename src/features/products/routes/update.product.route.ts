@@ -3,7 +3,6 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
 import { updateProductBodySchema } from '../schemas';
-import { processProductUpdateRequestBody } from '../utils';
 
 export const updateProduct: FastifyPluginCallback<
   Record<never, never>,

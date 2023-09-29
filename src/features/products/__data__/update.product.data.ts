@@ -10,6 +10,8 @@ export const requestBody = {
 
 export const requestBodyProcessed = {
   name: 'new name',
-  returnPolicy: { daysForReturn: 0, isReturnable: false },
-  isPromoted: false,
+  returnPolicy: {
+    daysForReturn: 0,
+    isReturnable: false,
+  },
 };
