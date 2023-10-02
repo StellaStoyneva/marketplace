@@ -1,19 +1,67 @@
 import { ObjectId } from 'mongodb';
-import { DeliveryTypeEnum, PaymentMethodTypeEnum } from 'src/constants/enum';
+import {
+  DeliveryStatusEnum,
+  DeliveryTypeEnum,
+  PaymentMethodTypeEnum,
+} from 'src/constants/enum';
 import { IAddress } from 'src/constants/types/address';
+import { IOrderItem } from './orderItem.entity';
+
+/**
+  if order to multiple stores and payment cash - accumulate here
+  on update check if totalPaid === finalPriceWithVAT
+  => is_paid = totalPaid === finalPriceWithVAT
+   */
 
 export interface IOrder {
-  customer: ObjectId | string;
-  customerEmail: string;
-  store: ObjectId | string;
-  items: ObjectId | string[];
-  finalPriceBeforeVAT: number;
-  finalPriceWithVAT: number;
+  /**Payment */
+  transactions: string[];
+  totalPriceBeforeVAT: number;
+  totalPriceWithVAT: number;
+  paymentMethod: string;
   invoiceAddress: IAddress;
-  invoiceNumber: number;
-  paymentMethod: PaymentMethodTypeEnum;
-  deliveryType: DeliveryTypeEnum;
-  deliveryRecipient: { name: string; phoneNumber: string; email: string };
+  // handler
+  is_paid: boolean;
+  totalPaid: number;
+
+  /**Customer */
+  // req.user
+  customer: ObjectId | string;
+  // handler
+  customerContact: {
+    email: string;
+    phoneNumber: string;
+  };
+
+  /**Items */
+  ordersToStore: {
+    /**Store - items */
+    store: ObjectId | string;
+    items: IOrderItem[];
+    /**Payment */
+    finalPriceBeforeVAT: number;
+    finalPriceWithVAT: number;
+    //handler - update when invoice created by store admin
+    invoiceNumber: number;
+    /**Delivery */
+    deliveryDetails: {
+      deliveryType: DeliveryTypeEnum;
+      recipient: string;
+      phoneNumber: string;
+      email: string;
+      address: IAddress;
+      paymentMethod: PaymentMethodTypeEnum;
+      //handler OR update
+      deliveryStatus: DeliveryStatusEnum;
+    };
+    // handler
+    isCancelable: boolean;
+    isCanceled: boolean;
+    updatedAt?: Date | null;
+    updatedBy?: ObjectId | string;
+    transaction: string | null;
+  }[];
+  // handler
   createdAt: Date;
   updatedAt?: Date | null;
   updatedBy?: ObjectId | string;

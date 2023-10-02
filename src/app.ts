@@ -1,49 +1,49 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
-import { config } from 'dotenv';
-import { usersSeedData } from './db/seed/user.seed';
-import { seedMultipleCollections } from './db/utils/seedMultipleCollections';
+import { loginUser } from '@users/routes/login.user.route';
+import { registerUser } from '@users/routes/register.user.route';
+import Fastify from 'fastify';
+import fastifyQs from 'fastify-qs';
+
 import {
-  orderItemSeedData,
-  orderSeedData,
-  productCategoriesSeedData,
-  productsSeedData,
-  productTypeSeedData,
-  reviewsSeedData,
-  storeSeedData,
-} from './db/seed';
-import { attachAllIndices } from './db/utils/attachAllIndices';
-import { indexingMapper } from './db/indexing/indexingMapper';
-import { attachIndex } from './db/utils/attachIndex';
+  serializerCompiler,
+  validatorCompiler,
+  ZodTypeProvider,
+} from 'fastify-type-provider-zod';
+import {
+  initiateDb,
+  authenticationPlugin,
+  enumsPlugin,
+  addServices,
+} from './plugins';
+import { registerRoutes } from '@utils/registerRoutes';
 
-config();
-const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.w0gfkgp.mongodb.net/?retryWrites=true&w=majority`;
+const { MONGO_HOST, MONGO_PORT, MONGO_USER, MONGO_PASS, MONGO_PROTOCOL } =
+  process.env;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+const MONGO_URL = `${MONGO_PROTOCOL}://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}${
+  MONGO_PORT ? `:${MONGO_PORT}` : ''
+}`;
 
-const db = client.db(process.env.DB_NAME);
+export const create = async () => {
+  const app = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
 
-export async function connectDb() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    console.log('Connected');
+  app.register(fastifyQs, {});
 
-    // Send a ping to confirm a successful connection
-    await client.db('admin').command({ ping: 1 });
-    console.log(
-      'Pinged your deployment. You successfully connected to MongoDB!'
-    );
-    //attachAllIndices(db, indexingMapper, attachIndex);
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
-}
-//run().catch(console.dir);
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
+  app.setNotFoundHandler(function custom404(_request, reply) {
+    reply.send({ not: 'found' });
+  });
+  app.setErrorHandler(function errHandler(error, _request, reply) {
+    reply.send(error.message);
+  });
+
+  await app.register(initiateDb, { url: MONGO_URL });
+  await app.register(enumsPlugin);
+  app.register(authenticationPlugin);
+  app.register(addServices);
+
+  registerRoutes(app);
+  app.register(registerUser, { prefix: '/auth' });
+  app.register(loginUser, { prefix: '/auth' });
+  return app;
+};

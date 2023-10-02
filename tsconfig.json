@@ -7,12 +7,18 @@
     "resolveJsonModule": true,
     "skipLibCheck": false,
     "lib": ["ES2021"],
+    "strict": true,
+    "paths": {
+      "@database": ["src/database"],
+      "@database/*": ["src/database/*"],
+      "@extensions/*": ["src/extensions/*"],
+      "@users": ["src/features/users"],
+      "@users/*": ["src/features/users/*"],
+      "@utils/*": ["src/utils/*"]
+    }
   },
   "ts-node": {
     "files": true,
-    "require": [
-      "tsconfig-paths/register",
-      "dotenv/config"
-    ]
+    "require": ["tsconfig-paths/register", "dotenv/config"]
   }
 }

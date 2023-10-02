@@ -3,6 +3,7 @@ export enum CollectionEnum {
   EnumDeliveryType = 'enum_delivery_type',
   EnumOfferType = 'enum_offer_type',
   EnumPaymentMethod = 'enum_payment_method',
+  EnumOrderItemLifeCycle = 'enum_order_item_life_cycle',
   EnumProductTypes = 'enum_product_types',
   EnumUserRoles = 'enum_user_roles',
   OrderItems = 'order_items',

@@ -1,0 +1,16 @@
+type filterType =
+  | 'name'
+  | 'sku'
+  | 'store'
+  | 'offer'
+  | 'isPromoted'
+  | 'productCategories'
+  | 'productTypes'
+  | 'createdBy'
+  | 'updatedBy'
+  | 'singlePriceBeforeVAT'
+  | 'singlePriceWithVAT'
+  | 'availableQuantity'
+  | 'ratingAverage'
+  | 'createdAt'
+  | 'updatedAt';

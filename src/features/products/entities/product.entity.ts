@@ -2,17 +2,23 @@ import { ObjectId } from 'mongodb';
 
 export interface IProduct {
   name: string;
-  productCode: string;
-  price: number; // decimal
+  sku: string;
+  description?: string;
+  singlePriceBeforeVAT: number;
+  singlePriceWithVAT: number;
   availableQuantity: number;
   store: ObjectId | string;
   offer: null | ObjectId | string;
   isPromoted?: boolean;
-  description?: string;
   images: string[];
   video?: string;
-  returnPolicy: { durationDays: number; description?: string; url?: string };
-  guaranteeDurationMonths?: number;
+  returnPolicy: {
+    daysForReturn: number;
+    isReturnable: boolean;
+    description?: string;
+    url?: string;
+  };
+  guaranteeDurationMonths: number;
   rating?: {
     sum: number;
     count: number;
@@ -23,13 +29,13 @@ export interface IProduct {
     fiveStars: number;
   };
   ratingAverage?: number;
-  reviews?: {
+  fiveMostRecentBestReviews?: {
     rating: number;
     comment?: string | null;
     author: { name: string; id: ObjectId | string };
   }[];
   productCategories: ObjectId | string[];
-  productTypes: ObjectId | string[];
+  productType: ObjectId | string;
   storeName: string;
   createdAt: Date;
   updatedAt: Date | null;

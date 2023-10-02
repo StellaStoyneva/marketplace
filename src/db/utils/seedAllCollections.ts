@@ -1,4 +1,5 @@
 import { Db } from 'mongodb';
+import { CollectionEnum } from '../enum/collection.enum';
 import {
   orderItemSeedData,
   orderSeedData,
@@ -14,35 +15,35 @@ import { seedMultipleCollections } from './seedMultipleCollections';
 export const seedAllCollections = async (db: Db) => {
   await seedMultipleCollections(db, [
     {
-      collectionName: 'users',
+      collectionName: CollectionEnum.Users,
       seed: usersSeedData,
     },
     {
-      collectionName: 'enum_product_types',
+      collectionName: CollectionEnum.EnumProductTypes,
       seed: productTypeSeedData,
     },
     {
-      collectionName: 'order_items',
+      collectionName: CollectionEnum.OrderItems,
       seed: orderItemSeedData,
     },
     {
-      collectionName: 'orders',
+      collectionName: CollectionEnum.Orders,
       seed: orderSeedData,
     },
     {
-      collectionName: 'product_categories',
+      collectionName: CollectionEnum.ProductCategories,
       seed: productCategoriesSeedData,
     },
     {
-      collectionName: 'product_reviews',
+      collectionName: CollectionEnum.ProductReviews,
       seed: reviewsSeedData,
     },
     {
-      collectionName: 'products',
+      collectionName: CollectionEnum.Products,
       seed: productsSeedData,
     },
     {
-      collectionName: 'stores',
+      collectionName: CollectionEnum.Stores,
       seed: storeSeedData,
     },
   ]);

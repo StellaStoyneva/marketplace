@@ -1,17 +1,34 @@
 import { ObjectId } from 'mongodb';
+import { OrderItemLifeCycleEnum } from 'src/constants/enum';
 
 export interface IOrderItem {
-  itemName: string;
+  _id: ObjectId | string;
+  order?: ObjectId | string;
+  store?: ObjectId | string;
+  product?: ObjectId | string;
+
+  //product
+  name: string;
+  sku: string;
+  image: string;
+
+  //pricing
   singlePriceBeforeVAT: number;
   singlePriceWithVAT: number;
   finalPriceBeforeVAT: number;
   finalPriceWithVAT: number;
   quantity: number;
-  image: string;
-  store: ObjectId | string;
-  deliveryStatus: ObjectId | string;
-  isReturned: boolean;
-  order: ObjectId | string;
-  returnDeadline: Date;
+
+  //status
+  deliveryStatus?: ObjectId;
+  daysForReturn: number;
+  isReturnable?: boolean;
+  isReturned?: boolean;
+  isRefundable?: boolean;
+  isRefunded?: boolean;
+  isCancelable?: boolean;
+  isCanceled?: boolean;
+  returnDeadline?: Date;
   refundDeadline?: Date;
+  status?: OrderItemLifeCycleEnum;
 }
